@@ -41,6 +41,109 @@
     else if (desktop.addListener) desktop.addListener(onChange);
   }
 
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Photos: hide any photo that fails to load instead of showing it broken */
+  document.querySelectorAll("[data-photo-frame] img[data-photo]").forEach(function (img) {
+    var hide = function () { img.closest("[data-photo-frame]").hidden = true; };
+    if (img.complete && img.naturalWidth === 0 && img.currentSrc) hide();
+    else img.addEventListener("error", hide);
+  });
+
+  /* Hero slideshow: cross-fading photos behind the hero text ---------- */
+  var hero = document.querySelector("[data-hero]");
+  if (hero) {
+    var slides = Array.prototype.slice.call(hero.querySelectorAll(".hero-slide"));
+    var dots = Array.prototype.slice.call(hero.querySelectorAll("[data-hero-dot]"));
+    var controls = hero.querySelector("[data-hero-controls]");
+    var toggleBtn = hero.querySelector("[data-hero-toggle]");
+    var current = 0;
+    var timer = null;
+    var userPaused = reduceMotion; // never auto-advance when reduced motion is requested
+    var hovered = false;
+    var DELAY = 6000;
+
+    var render = function () {
+      slides.forEach(function (slide, i) {
+        var active = i === current;
+        slide.classList.toggle("is-active", active);
+        if (active) slide.removeAttribute("aria-hidden");
+        else slide.setAttribute("aria-hidden", "true");
+        slide.setAttribute("aria-label", (i + 1) + " of " + slides.length);
+      });
+      dots.forEach(function (dot, i) {
+        if (i === current) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+        dot.setAttribute("aria-label", "Show photo " + (i + 1) + " of " + slides.length);
+      });
+    };
+
+    var go = function (index) {
+      if (!slides.length) return;
+      current = (index + slides.length) % slides.length;
+      render();
+    };
+
+    var stop = function () { clearInterval(timer); timer = null; };
+    var start = function () {
+      stop();
+      if (!userPaused && !hovered && slides.length > 1 && !document.hidden) {
+        timer = setInterval(function () { go(current + 1); }, DELAY);
+      }
+    };
+
+    var updateToggle = function () {
+      toggleBtn.setAttribute("data-paused", String(userPaused));
+      toggleBtn.setAttribute("aria-label", userPaused ? "Play slideshow" : "Pause slideshow");
+    };
+
+    // Drop slides whose photo fails to load, together with their dot.
+    var removeSlide = function (slide) {
+      var i = slides.indexOf(slide);
+      if (i === -1) return;
+      slides.splice(i, 1);
+      slide.remove();
+      var dot = dots.splice(i, 1)[0];
+      if (dot) dot.remove();
+      dots.forEach(function (d, n) { d.setAttribute("data-hero-dot", String(n)); });
+      if (current >= slides.length) current = 0;
+      if (controls) controls.hidden = slides.length < 2;
+      render();
+      start();
+    };
+    slides.slice().forEach(function (slide) {
+      var img = slide.querySelector("img");
+      if (!img) return;
+      if (img.complete && img.naturalWidth === 0 && img.currentSrc) removeSlide(slide);
+      else img.addEventListener("error", function () { removeSlide(slide); });
+    });
+
+    if (controls && slides.length > 1) {
+      controls.hidden = false;
+      hero.querySelector("[data-hero-prev]").addEventListener("click", function () { go(current - 1); start(); });
+      hero.querySelector("[data-hero-next]").addEventListener("click", function () { go(current + 1); start(); });
+      controls.addEventListener("click", function (event) {
+        var dot = event.target.closest("[data-hero-dot]");
+        if (dot) { go(Number(dot.getAttribute("data-hero-dot"))); start(); }
+      });
+      toggleBtn.addEventListener("click", function () {
+        userPaused = !userPaused;
+        updateToggle();
+        start();
+      });
+      // Pause while the visitor is pointing at or keyboard-focused in the hero.
+      hero.addEventListener("mouseenter", function () { hovered = true; stop(); });
+      hero.addEventListener("mouseleave", function () { hovered = false; start(); });
+      hero.addEventListener("focusin", function () { hovered = true; stop(); });
+      hero.addEventListener("focusout", function (event) {
+        if (!hero.contains(event.relatedTarget)) { hovered = false; start(); }
+      });
+      document.addEventListener("visibilitychange", start);
+      updateToggle();
+      start();
+    }
+  }
+
   /* 2. Footer year ---------------------------------------------------- */
   document.querySelectorAll("[data-year]").forEach(function (el) {
     el.textContent = String(new Date().getFullYear());

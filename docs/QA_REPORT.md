@@ -21,7 +21,7 @@ All 8 pages were checked at **320, 360, 375, 390, 430, 768, 1024, 1280, 1440 and
 - First run: overflow on every page at 320px. The cause was a header button whose `display` rule in `styles.css` overrode Tailwind's `hidden`. Fixed by wrapping the button in a span and moving the menu-toggle breakpoint into `styles.css`.
 - Final run: **0 overflow issues**.
 
-Screenshots were reviewed visually at 375, 768 and 1440px for Home, About, Services and Contact. No overlap, clipping, distorted illustrations or hidden content was found.
+Screenshots were reviewed visually at 375, 768 and 1440px for Home, About, Services and Contact. No overlap, clipping, distorted images or hidden content was found.
 
 ## 3. Accessibility — PASS (automated), manual checks noted
 
@@ -74,7 +74,7 @@ A script collected every `href` on every page:
 ## 7. Performance
 
 - No Lighthouse run. Lighthouse is not installed, and the Tailwind CDN cannot load in this environment, which would distort the scores. **No scores are claimed.**
-- Asset weights (measured): `styles.css` ≈ 12 KB, `main.js` ≈ 7 KB, the two SVG illustrations ≈ 2 KB and ≈ 4 KB. There are no raster images.
+- Asset weights (measured): `styles.css` ≈ 12 KB, `main.js` ≈ 7 KB, logo ≈ 14 KB. Photos are served by the Pexels CDN, compressed and resized per screen via `srcset`; everything below the hero is lazy-loaded.
 - Known cost: the Tailwind Play CDN script (~100 KB+, compiles in the browser) and Tailwind's own console notice that the CDN is not intended for production. Mitigation: `README.md` → "Optional: compile Tailwind".
 
 ## 8. Deployment script and server configuration
@@ -84,10 +84,25 @@ A script collected every `href` on every page:
   - After `index.php` was removed, it copied the 8 pages, `assets/`, `js/`, `robots.txt`, `sitemap.xml` and `.htaccess`, kept `cgi-bin/`, and left out `assets/images/source/`, `docs/` and the README.
 - **`.htaccess` was not tested.** No Apache or LiteSpeed server is available in the build environment. Its rules (`DirectoryIndex`, `ErrorDocument`, `RewriteRule`) are standard, but they must be checked on the live server (`DEPLOYMENT.md`, step 4).
 
+## 9. Stock photos and hero slideshow (third run)
+
+`images.pexels.com` is blocked in the build environment, so **the real photos were never displayed during testing.** Every Pexels request was answered with a generated stand-in JPEG. This tests layout, cropping, loading and slider behaviour, not the photos' actual content. **Look at the live pages to confirm that each photo suits its section** (`LICENSES-AND-ATTRIBUTION.md` lists which photo goes where).
+
+| Check | Result |
+| --- | --- |
+| HTML validation, overflow at 10 widths, axe on all pages, links | Pass (0 errors / 0 overflow / 0 violations / 0 broken). First pass: axe flagged the footer "Pexels" link as indistinguishable from the text (fixed with an underline), and html-validate preferred `<section>` over `role="region"` (fixed) |
+| Lazy-loaded photos load when scrolled into view | 11/11 on Home, 6/6 on Services, 1/1 on About |
+| Slideshow starts on slide 1; controls are revealed by JS | Pass |
+| Autoplay advances after 6 s (pointer outside the hero) | Pass (slide 1 → 2) |
+| Next button / dot buttons | Pass |
+| Pause button stops autoplay; label changes to "Play slideshow" | Pass (no change after 6.6 s) |
+| `prefers-reduced-motion: reduce` → no autoplay, button shows "Play slideshow" | Pass |
+| Failure test: 2 photos blocked (one hero slide, one service card) | Hero dropped to 3 slides with 3 dots; the failed card photo was hidden; no layout break |
+
 ## Unresolved issues
 
-1. Live server deployment not performed: no access to the hosting account from the build environment. `verycare.ca` still returned DNS `ENOTFOUND` on re-check.
-2. Live site never inspected (DNS failure); all content is from the supplied extraction.
+1. The deployment to the live server was done by the owner; the live site was not tested from the build environment.
+2. The original live site was never inspected. All content is from the supplied extraction. (The earlier "DNS failure" finding was a tool limitation.)
 3. Opening hours unconfirmed and not published.
 4. Privacy Policy, Terms and Blog content not supplied; holding pages are in place.
 5. Form not connected to any submission service.

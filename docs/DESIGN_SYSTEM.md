@@ -6,12 +6,12 @@ Brand colours are **sampled from the official logo** (`assets/images/source/very
 
 | Token | Hex | Source | Use | Contrast on white |
 | --- | --- | --- | --- | --- |
-| `brand-blue-500` / `--vc-blue-500` | `#3D92E5` | Logo light blue | Illustrations, decorative only | 3.3 : 1 |
+| `brand-blue-500` / `--vc-blue-500` | `#3D92E5` | Logo light blue | Decorative only | 3.3 : 1 |
 | `brand-blue-600` / `--vc-blue-600` | `#2D73BB` | Logo blue (main) | Primary buttons (white text) | 4.9 : 1 (AA) |
 | `brand-blue-700` / `--vc-blue-700` | `#21568C` | Logo dark blue | Links, text-coloured icons, button hover | 7.6 : 1 (AAA) |
 | `brand-blue-800` / `--vc-blue-800` | `#1A4570` | Derived | CTA band background | 9.9 : 1 |
 | `brand-blue-50` / `--vc-blue-50` | `#EEF5FC` | Derived | Hero and tinted backgrounds, icon badges | — |
-| `brand-green-500` / `--vc-green-500` | `#2EA026` | Logo green | Decorative accents (eyebrow rule, active-nav underline, illustrations) | 3.4 : 1, so not used for text |
+| `brand-green-500` / `--vc-green-500` | `#2EA026` | Logo green | Decorative accents (eyebrow rule, active-nav underline) | 3.4 : 1, so not used for text |
 | `brand-green-700` / `--vc-green-700` | `#1F7419` | Derived (darkened logo green) | Eyebrow text, "Care" in the wordmark, green icons | 5.9 : 1 (AA) |
 | `brand-green-50` / `--vc-green-50` | `#EDF8EC` | Derived | Green icon badges | — |
 | `ink` / `--vc-ink` | `#0F2A44` | Neutral | Headings, top bar, footer background | 14.6 : 1 |
@@ -59,7 +59,7 @@ Colours are defined twice and must stay in sync: in `js/tailwind-config.js` (`br
 | Page hero | `.page-hero` + `.breadcrumb` | Tinted header for inner pages |
 | CTA band | `.cta-band` | Dark blue with a subtle green radial accent |
 
-**Radius scale:** 8px (buttons, inputs), 14px (cards), 22px (illustration frames).
+**Radius scale:** 8px (buttons, inputs), 14px (cards), 22px (photo frames).
 **Shadow:** one shadow token (`--vc-shadow`), applied sparingly.
 
 ## Icons
@@ -69,8 +69,19 @@ Colours are defined twice and must stay in sync: in `js/tailwind-config.js` (`br
 
 ## Imagery
 
-- Two original flat illustrations (`home-living-room.svg`, `home-exterior.svg`) use the logo palette. They show places, not people, so they cannot be mistaken for VeryCare staff or clients.
-- If photographs are added later: use licensed images only, record them in `LICENSES-AND-ATTRIBUTION.md`, export WebP/JPEG at no more than 1600px wide, set `width`/`height` attributes, use `loading="lazy"` below the fold, and do not imply the people shown are VeryCare staff or clients.
+- **Stock photographs** from Pexels (free licence), served from the Pexels CDN with `auto=compress`, a fixed crop per use, and `srcset` widths so each device downloads only what it needs. The photo for each slot is listed in `LICENSES-AND-ATTRIBUTION.md`, and the IDs are set in each page's HTML.
+- Crops: hero 16:9 (768/1280/1920w); service cards 3:2; Services-page rows 4:3; Home "About" photo 4:3; About-page photo 4:5. Frames have a `blue-50` background while loading.
+- Every photo has descriptive alt text. The footer states that the photos are illustrative stock images, so they are not presented as VeryCare staff or clients.
+- If a photo fails to load, `js/main.js` hides its frame (or drops the hero slide and its dot) instead of showing a broken image.
+- To swap a photo: change the Pexels ID in every URL of that `<img>` (src and srcset), update the alt text, and update the table in `LICENSES-AND-ATTRIBUTION.md`. To use your own photo, put it in `assets/images/` and point `src` at it, removing `srcset` or listing local sizes.
+
+## Hero slideshow
+
+- Four photos cross-fade (1.2 s) behind the hero text every 6 s, with a slow 1.06 → 1 zoom. A navy gradient overlay keeps the white text readable on any photo: left-weighted on desktop, uniform on mobile.
+- Controls: previous, next, one dot per photo (current dot widened, `aria-current`), and play/pause. This meets WCAG 2.2.2 (Pause, Stop, Hide).
+- Autoplay pauses while the pointer is over the hero or keyboard focus is inside it, and when the tab is hidden. It never starts if the visitor has requested reduced motion.
+- Markup: `<section aria-roledescription="carousel">` with `role="group" aria-roledescription="slide"` figures. Inactive slides are `aria-hidden`.
+- Without JavaScript, the first photo shows as a static background and the controls stay hidden.
 
 ## Logo
 

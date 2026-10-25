@@ -14,7 +14,7 @@ The site is a rebuild of https://verycare.ca/ using the content supplied for the
 - HTML5, CSS3, vanilla JavaScript
 - Tailwind CSS via the Play CDN (`https://cdn.tailwindcss.com`), configured in `js/tailwind-config.js`
 - Figtree font from Google Fonts
-- Local SVG illustrations and icons
+- Stock photos from Pexels (served from the Pexels CDN) and inline SVG icons
 
 ## Structure
 
@@ -29,7 +29,7 @@ privacy-policy.html        Holding page (policy text to be supplied)       noind
 terms-and-conditions.html  Holding page (terms text to be supplied)        noindex
 404.html                   Not-found page (uses <base href="/">)
 assets/css/styles.css      Design tokens + components
-assets/images/             Logo (verycare-logo.png), og-image.jpg, illustrations
+assets/images/             Logo (verycare-logo.png), og-image.jpg
 assets/images/source/      Logo masters (original JPEG + transparent PNG) — not deployed
 assets/icons/              Favicons generated from the logo
 js/tailwind-config.js      Tailwind theme (brand colours, font)
@@ -102,9 +102,10 @@ Where `tailwind.config.js` exports the object in `js/tailwind-config.js` with `c
 
 ## Known limitations
 
-1. **The live site could not be inspected:** `verycare.ca` did not resolve in DNS during the project. All content comes from the supplied extraction. See `docs/WEBSITE_AUDIT.md`.
+1. **The original site was not inspected:** all content comes from the supplied extraction. See `docs/WEBSITE_AUDIT.md`.
 2. **Opening hours not published:** the three supplied schedules conflict. See `docs/CONTENT_CORRECTIONS.md` §3.
 3. **Legal pages and blog:** their texts were not supplied, so holding pages are in place.
 4. **Form:** not connected to any submission service (see above).
 5. **Copyright line** reads "© [year] VeryCare". The legal entity name needs owner confirmation (the old site showed "Skillscore").
 6. The Tailwind Play CDN is intended for development; see "Optional: compile Tailwind".
+7. **Photos load from `images.pexels.com`.** If Pexels is unreachable, the photos are hidden and the hero falls back to a navy background. The photos could not be viewed in the build environment, so check them on the live site.

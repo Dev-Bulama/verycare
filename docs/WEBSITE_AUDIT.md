@@ -10,13 +10,13 @@ The live website **could not be inspected** during this project:
 | Method | Result |
 | --- | --- |
 | Direct HTTPS from the build container | Refused by the environment's network policy (proxy returned `403` for `verycare.ca:443`) |
-| Web-fetch service (independent network) | `getaddrinfo ENOTFOUND verycare.ca`, and the same for `www.verycare.ca`: the domain did not resolve in DNS at the time of the audit |
+| Web-fetch tool | `getaddrinfo ENOTFOUND verycare.ca`. This tool later also failed for `example.com`, `unsplash.com` and `pexels.com`, so the result says nothing about `verycare.ca` (see correction below) |
 | Internet Archive (Wayback Machine) | Not reachable from this environment |
 | Web search (`verycare.ca`, the phone number, the hero headline) | No indexed pages for the site were found |
 
 As a result, **every finding below is based on the content extraction supplied with the project brief**, not on a live inspection. Nothing in this report claims that a page was opened, a link was clicked, or a form was submitted on the live site. Items that need live verification are marked **VERIFY**.
 
-The domain not resolving may be temporary, a DNS misconfiguration, or a lapsed registration. **The site owner should check this urgently**: if `verycare.ca` does not resolve, the current website and probably the `info@verycare.ca` mailbox are unreachable for the public.
+**Correction (later in the project):** the web-fetch tool used here turned out to be unable to resolve *any* domain, including `example.com`, so `ENOTFOUND` was a limitation of the tool, **not** a DNS fault with `verycare.ca`. The owner has confirmed that the site is live.
 
 ## 1. Page inventory (from the supplied extraction)
 
@@ -65,13 +65,13 @@ Fully preserved (with corrections logged in `CONTENT_CORRECTIONS.md`):
 
 ## 5. Logo and brand assets
 
-- The logo URL on the old site (`…/wp-content/uploads/2025/08/verycare-removebg-preview.png`) could not be downloaded, because the domain does not resolve.
+- The logo URL on the old site (`…/wp-content/uploads/2025/08/verycare-removebg-preview.png`) could not be downloaded from the build environment.
 - **The owner then supplied the logo directly** (1167×1167 JPEG: a blue "V" with a green figure and green arcs, held by two blue hands). It is stored unchanged in `assets/images/source/verycare-logo-original.jpg`.
 - Sampled logo colours: blue `#2D73BB`, light blue `#3D92E5`, dark blue `#21568C`, green `#2EA026`. These now drive the site palette (`DESIGN_SYSTEM.md`).
 
 ## 6. Existing image assets
 
-No original images were available, because the domain does not resolve. The extraction names no photographs. The redesign uses two original SVG illustrations created for this project (see `LICENSES-AND-ATTRIBUTION.md`).
+No original images were available from the build environment, and the extraction names no photographs. The first version used two original SVG illustrations. At the owner's request these were replaced with free-licence Pexels stock photographs (see `LICENSES-AND-ATTRIBUTION.md`).
 
 ## 7. Visual design problems (from the extraction)
 
@@ -133,11 +133,11 @@ The conflict cannot be resolved without the owner. **No opening hours are publis
 
 ## 15. Recommended next steps for the owner
 
-1. Restore DNS for `verycare.ca` (and check the `info@verycare.ca` mail records). A re-check after the logo was supplied still returned `ENOTFOUND`.
+1. ~~Restore DNS~~: not needed. The `ENOTFOUND` result came from the fetch tool; the owner confirmed the site is live.
 1a. Remove `fnchhvk8_verycare_db.sql`, `wordpress.zip` and the test PHP scripts from `public_html`: they are publicly downloadable there (see `DEPLOYMENT.md`).
 2. ~~Add the official logo~~ — done (supplied by the owner).
 3. Confirm the real opening hours and whether emergency/24-7 telephone support is offered.
 4. Confirm the legal entity name for the copyright line.
 5. Supply the existing Privacy Policy, Terms & Conditions, and blog articles for migration.
 6. Choose a form-submission service (or keep phone/email only). See `README.md` → "Connecting the consultation form".
-7. Supply licensed photographs, if photography is preferred over the illustrations.
+7. ~~Supply photographs~~: done with Pexels stock photos. Replace them with your own photos of real VeryCare care if you have them (with consent).

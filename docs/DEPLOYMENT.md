@@ -73,12 +73,9 @@ git pull origin claude/bold-gates-sbblpo
 bash deploy-cpanel.sh
 ```
 
-### If the domain still does not load
+### If the domain does not load
 
-During this project `verycare.ca` **did not resolve in DNS at all** from outside networks (`ENOTFOUND`). This is not caused by the website files. Check in this order:
-1. The domain registration has not expired (at the registrar).
-2. The nameservers point to the hosting provider (cPanel → **Zone Editor** shows the expected records).
-3. The `A` record for `verycare.ca` and `www` points to the server's IP (cPanel → **Server Information** / **Zone Editor**).
+Check that the domain registration is current, that the nameservers point to the host, and that the `A` records for `verycare.ca` and `www` point to the server's IP (cPanel → **Zone Editor**). Earlier versions of this guide said the domain did not resolve; that was a limitation of a tool used during the build, not a real DNS fault.
 
 ---
 
