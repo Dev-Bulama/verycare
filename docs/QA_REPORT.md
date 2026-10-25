@@ -1,13 +1,13 @@
 # QA Report
 
-Test date: 25 October 2026. All tests below were actually run in the build environment; results are as recorded.
+Test date: 25 October 2026. All tests below were actually run in the build environment; results are as recorded. The full suite was run twice: once for the first delivery, and again after the owner supplied the logo (palette, header and footer changed). The results below are from the second run.
 
 ## Test environment and an important caveat
 
 - Headless Chromium (Playwright), serving the site locally with `python3 -m http.server`.
 - **The Tailwind Play CDN (`cdn.tailwindcss.com`) is blocked in the build environment.** For testing, requests to it were intercepted, and an equivalent stylesheet compiled locally was injected in its place. That stylesheet used **Tailwind CSS v3.4.17** with the exact config in `js/tailwind-config.js`, scanning all `*.html` and `js/*.js`. The rendered layout should match the CDN, but the CDN build itself was not loaded in testing. **Do a visual check in a normal browser after deployment.**
 - Google Fonts requests were stubbed, so the screenshots use the fallback system font rather than Figtree.
-- The logo file is not in the repository, so all tests ran with the text-wordmark fallback.
+- The second run used the supplied logo (`assets/images/verycare-logo.png`). It loaded on every page (natural width 261px, rendered 48px high in the header).
 
 ## 1. HTML validation — PASS
 
@@ -37,7 +37,7 @@ Scripted keyboard and behaviour checks (all passed):
 | First Tab press focuses "Skip to main content" | Pass |
 | Mobile menu button opens the menu (`aria-expanded="true"`, menu visible) | Pass |
 | Escape closes the menu and returns focus to the button | Pass |
-| Logo missing → image hidden, text wordmark shown | Pass |
+| Logo image loads in the header (no failed requests on any page) | Pass |
 
 Not tested: real screen readers (NVDA/JAWS/VoiceOver) and manual zoom to 400%. Recommended before launch.
 
@@ -49,7 +49,7 @@ A script collected every `href` on every page:
 - **0 missing anchor targets.** All `services.html#…` and `#consultation` targets exist.
 - **0 empty or `#` links.**
 - External destinations are only `tel:+19055193423` and `mailto:info@verycare.ca`, plus Google Fonts and the Tailwind CDN in `<head>`.
-- Console: 0 JavaScript errors. The only failing request is the expected missing `assets/images/verycare-logo.png`.
+- Console: 0 JavaScript errors and 0 failed (4xx/5xx) requests on all pages.
 
 ## 5. Consultation form — PASS (behaviour as designed)
 
@@ -77,9 +77,16 @@ A script collected every `href` on every page:
 - Asset weights (measured): `styles.css` ≈ 12 KB, `main.js` ≈ 7 KB, the two SVG illustrations ≈ 2 KB and ≈ 4 KB. There are no raster images.
 - Known cost: the Tailwind Play CDN script (~100 KB+, compiles in the browser) and Tailwind's own console notice that the CDN is not intended for production. Mitigation: `README.md` → "Optional: compile Tailwind".
 
+## 8. Deployment script and server configuration
+
+- `deploy-cpanel.sh` was run against a mock `public_html` containing `cgi-bin/` and `index.php`:
+  - It refused to deploy while `index.php` was present (exit 1, with a message).
+  - After `index.php` was removed, it copied the 8 pages, `assets/`, `js/`, `robots.txt`, `sitemap.xml` and `.htaccess`, kept `cgi-bin/`, and left out `assets/images/source/`, `docs/` and the README.
+- **`.htaccess` was not tested.** No Apache or LiteSpeed server is available in the build environment. Its rules (`DirectoryIndex`, `ErrorDocument`, `RewriteRule`) are standard, but they must be checked on the live server (`DEPLOYMENT.md`, step 4).
+
 ## Unresolved issues
 
-1. Official logo file missing (wordmark fallback in use); brand colours are provisional.
+1. Live server deployment not performed: no access to the hosting account from the build environment. `verycare.ca` still returned DNS `ENOTFOUND` on re-check.
 2. Live site never inspected (DNS failure); all content is from the supplied extraction.
 3. Opening hours unconfirmed and not published.
 4. Privacy Policy, Terms and Blog content not supplied; holding pages are in place.

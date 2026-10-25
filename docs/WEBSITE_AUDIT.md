@@ -65,10 +65,9 @@ Fully preserved (with corrections logged in `CONTENT_CORRECTIONS.md`):
 
 ## 5. Logo and brand assets
 
-- The supplied logo URL is `https://verycare.ca/wp-content/uploads/2025/08/verycare-removebg-preview.png`. It **could not be downloaded**, because the domain does not resolve.
-- No logo file was present in the repository.
-- The brief describes the logo as blue and green, with an abstract human/care-inspired symbol.
-- **Consequence:** the site references `assets/images/verycare-logo.png`. Until that file is added, a text wordmark ("VeryCare") is shown automatically. The brand colours are provisional and were **not** sampled from the logo (see `DESIGN_SYSTEM.md`).
+- The logo URL on the old site (`…/wp-content/uploads/2025/08/verycare-removebg-preview.png`) could not be downloaded, because the domain does not resolve.
+- **The owner then supplied the logo directly** (1167×1167 JPEG: a blue "V" with a green figure and green arcs, held by two blue hands). It is stored unchanged in `assets/images/source/verycare-logo-original.jpg`.
+- Sampled logo colours: blue `#2D73BB`, light blue `#3D92E5`, dark blue `#21568C`, green `#2EA026`. These now drive the site palette (`DESIGN_SYSTEM.md`).
 
 ## 6. Existing image assets
 
@@ -134,8 +133,9 @@ The conflict cannot be resolved without the owner. **No opening hours are publis
 
 ## 15. Recommended next steps for the owner
 
-1. Restore DNS for `verycare.ca` (and check the `info@verycare.ca` mail records).
-2. Add the official logo file as `assets/images/verycare-logo.png`, then update the brand colours from it.
+1. Restore DNS for `verycare.ca` (and check the `info@verycare.ca` mail records). A re-check after the logo was supplied still returned `ENOTFOUND`.
+1a. Remove `fnchhvk8_verycare_db.sql`, `wordpress.zip` and the test PHP scripts from `public_html`: they are publicly downloadable there (see `DEPLOYMENT.md`).
+2. ~~Add the official logo~~ — done (supplied by the owner).
 3. Confirm the real opening hours and whether emergency/24-7 telephone support is offered.
 4. Confirm the legal entity name for the copyright line.
 5. Supply the existing Privacy Policy, Terms & Conditions, and blog articles for migration.

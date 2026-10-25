@@ -1,28 +1,13 @@
 /*
  * VeryCare — site behaviour (vanilla JavaScript, no dependencies)
- *  1. Logo fallback (shows the text wordmark if the logo file is missing)
- *  2. Accessible mobile navigation
- *  3. Current year in the footer
- *  4. Consultation form: validation and honest submission handling
+ *  1. Accessible mobile navigation
+ *  2. Current year in the footer
+ *  3. Consultation form: validation and honest submission handling
  */
 (function () {
   "use strict";
 
-  /* 1. Logo fallback -------------------------------------------------- */
-  function showWordmark(img) {
-    img.hidden = true;
-    var fallback = img.parentNode.querySelector("[data-logo-fallback]");
-    if (fallback) fallback.hidden = false;
-  }
-  document.querySelectorAll("img[data-logo]").forEach(function (img) {
-    if (img.complete && img.naturalWidth === 0) {
-      showWordmark(img);
-    } else {
-      img.addEventListener("error", function () { showWordmark(img); });
-    }
-  });
-
-  /* 2. Mobile navigation ---------------------------------------------- */
+  /* 1. Mobile navigation ---------------------------------------------- */
   var toggle = document.querySelector("[data-menu-toggle]");
   var menu = document.getElementById("mobile-menu");
 
@@ -56,12 +41,12 @@
     else if (desktop.addListener) desktop.addListener(onChange);
   }
 
-  /* 3. Footer year ---------------------------------------------------- */
+  /* 2. Footer year ---------------------------------------------------- */
   document.querySelectorAll("[data-year]").forEach(function (el) {
     el.textContent = String(new Date().getFullYear());
   });
 
-  /* 4. Consultation form ---------------------------------------------- */
+  /* 3. Consultation form ---------------------------------------------- */
   var PHONE = "+1-905-519-3423";
   var EMAIL = "info@verycare.ca";
 

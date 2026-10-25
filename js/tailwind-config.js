@@ -2,9 +2,10 @@
  * Tailwind CSS (Play CDN) configuration for the VeryCare website.
  * Loaded immediately after https://cdn.tailwindcss.com on every page.
  *
- * Brand colours are PROVISIONAL until they are sampled from the official
- * VeryCare logo file (see docs/DESIGN_SYSTEM.md). Keep these values in sync
- * with the CSS custom properties at the top of assets/css/styles.css.
+ * Brand colours are sampled from the VeryCare logo
+ * (assets/images/source/verycare-logo-original.jpg); see docs/DESIGN_SYSTEM.md.
+ * Keep these values in sync with the CSS custom properties at the top of
+ * assets/css/styles.css.
  */
 window.tailwind = window.tailwind || {};
 window.tailwind.config = {
@@ -13,21 +14,21 @@ window.tailwind.config = {
       colors: {
         brand: {
           blue: {
-            50: "#EEF4FA",
-            100: "#D9E7F4",
-            200: "#B3CEE9",
-            500: "#2B74C2",
-            600: "#1F66B0",
-            700: "#17589C",
-            800: "#114676",
-            900: "#0C3357"
+            50: "#EEF5FC",
+            100: "#D8E8F8",
+            200: "#B5D2F1",
+            500: "#3D92E5",
+            600: "#2D73BB",
+            700: "#21568C",
+            800: "#1A4570",
+            900: "#12314F"
           },
           green: {
-            50: "#EDF7F0",
-            100: "#D6EEDD",
-            500: "#3AA35F",
-            600: "#2B8C4E",
-            700: "#1E7444"
+            50: "#EDF8EC",
+            100: "#D3EED0",
+            500: "#2EA026",
+            600: "#23801D",
+            700: "#1F7419"
           }
         },
         ink: "#0F2A44",

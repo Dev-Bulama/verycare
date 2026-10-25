@@ -1,55 +1,104 @@
 # Deployment
 
-The site is plain static files: no build step, database or server-side code. Upload the repository contents (everything except `docs/`, `README.md` and `LICENSES-AND-ATTRIBUTION.md`, which are harmless if included) to the web root.
+The site is plain static files: no build step, database or server-side code.
+Files the web server needs: `*.html`, `assets/`, `js/`, `robots.txt`, `sitemap.xml`, `.htaccess`.
+`deploy-cpanel.sh` copies exactly these files, and nothing else, into the web root.
 
-Files the web server must serve: `*.html`, `assets/`, `js/`, `robots.txt`, `sitemap.xml`.
+---
 
-## Before going live
+## cPanel server (`~/public_html` on srv31) — replacing the WordPress site
 
-1. Add the official logo at `assets/images/verycare-logo.png`.
-2. Confirm the domain: canonical URLs, Open Graph URLs, `sitemap.xml` and `robots.txt` all assume `https://verycare.ca/`. Change them if the site will live elsewhere.
-3. Make sure `verycare.ca` resolves in DNS. It did not resolve during this project.
-4. Configure the 404 page (below).
+The current `public_html` holds a WordPress install. Its `index.php` would take priority over `index.html`, and its `.htaccess` sends every request to WordPress. **WordPress must be moved out of `public_html` (not deleted) before the static site can render.**
 
-## cPanel / hPanel (shared hosting)
+> ⚠️ **Security — do this today, even before deploying.** `public_html` currently contains
+> `fnchhvk8_verycare_db.sql`, `wordpress.zip`, `force-send-email.php` and `test-logging.php`.
+> Anything in `public_html` can be downloaded by anyone at `https://verycare.ca/<filename>`.
+> A database dump can contain user accounts, password hashes and form submissions.
+> Step 1 below moves all of these out of the web root.
 
-1. Open **File Manager** and go to `public_html/` (back up or remove the old WordPress files first, if this replaces WordPress).
-2. Upload the files, keeping the folder structure. Or zip them locally, upload, and **Extract**.
-3. `index.html` is served automatically at `/`.
-4. 404 page: add to `public_html/.htaccess`:
-   ```
-   ErrorDocument 404 /404.html
-   ```
-5. Optional, to redirect old WordPress URLs:
-   ```
-   Redirect 301 /about-us/   /about.html
-   Redirect 301 /contact-us/ /contact-us.html
-   ```
-6. Enable SSL (AutoSSL / Let's Encrypt) in the control panel.
+Connect with SSH (or cPanel → **Terminal**) and run the steps in order.
 
-## Netlify
+### 1. Back up WordPress outside the web root
 
-1. **Add new site → Import an existing project →** pick the GitHub repo.
-2. Build command: *(empty)*. Publish directory: `/` (repository root).
-3. Netlify serves `404.html` automatically.
-4. Add the custom domain and enable HTTPS.
+```bash
+cd ~
+BK=~/wordpress-backup-$(date +%Y%m%d-%H%M)
+mkdir -p "$BK"
+shopt -s dotglob                         # include hidden files such as .htaccess
+for f in ~/public_html/*; do
+  [ "$(basename "$f")" = "cgi-bin" ] && continue   # keep cgi-bin in place
+  mv "$f" "$BK"/
+done
+shopt -u dotglob
+ls -A ~/public_html                      # should now show only: cgi-bin
+ls -A "$BK"                              # WordPress, .htaccess, the .sql dump, etc.
+```
 
-## Cloudflare Pages
+Nothing is deleted. To roll back, move the files from `$BK` back into `~/public_html`. The WordPress database in MySQL is untouched.
 
-1. **Workers & Pages → Create → Pages → Connect to Git**, then pick the repo.
-2. Framework preset: *None*. Build command: *(empty)*. Output directory: `/`.
-3. `404.html` at the root is used automatically.
-4. Add the custom domain.
+### 2. Get the website code
 
-## GitHub Pages
+```bash
+cd ~
+git clone -b claude/bold-gates-sbblpo https://github.com/Dev-Bulama/verycare.git ~/verycare-site
+```
 
-1. Repository **Settings → Pages → Build and deployment → Deploy from a branch**.
-2. Choose the branch (for example `main`) and folder `/ (root)`.
-3. `404.html` at the root is used automatically.
-4. For a custom domain, add it under Pages settings (this creates a `CNAME` file) and point DNS to GitHub Pages.
+If the repository is private, Git asks for a username and password. Use your GitHub username, and as the password a **GitHub personal access token** with read access to the repository (GitHub → Settings → Developer settings → Personal access tokens). Alternatively, use cPanel → **Git™ Version Control → Create → Clone a Repository**, with the same URL and `~/verycare-site` as the path.
 
-## After deployment
+The repository is cloned **outside** `public_html`, so the `.git` folder and the docs are never public.
 
-- Load every page in a desktop and a mobile browser. Check that the Tailwind styles applied, since the CDN was not testable in the build environment (see `QA_REPORT.md`).
+### 3. Copy the site into public_html
+
+```bash
+cd ~/verycare-site
+bash deploy-cpanel.sh            # copies into ~/public_html
+ls -A ~/public_html
+```
+
+The script refuses to run while `index.php` or `wp-config.php` is still in `public_html`. It sets permissions to 644 for files and 755 for folders.
+
+### 4. Check it
+
+- Open `https://verycare.ca/` (or `http://` if SSL is not active yet). The VeryCare home page should load.
+- Open `https://verycare.ca/about-us/`. It should redirect to `/about.html` (redirect rules for old WordPress URLs are in `.htaccess`).
+- Open `https://verycare.ca/does-not-exist`. The VeryCare 404 page should appear.
+- If the old WordPress page still shows, clear the cache: cPanel → **LiteSpeed Web Cache Manager → Flush All**, then hard-refresh the browser.
+- Once SSL works (cPanel → **SSL/TLS Status → Run AutoSSL**), uncomment the two HTTPS lines in `~/public_html/.htaccess` to force HTTPS.
+
+### 5. Updating the site later
+
+```bash
+cd ~/verycare-site
+git pull origin claude/bold-gates-sbblpo
+bash deploy-cpanel.sh
+```
+
+### If the domain still does not load
+
+During this project `verycare.ca` **did not resolve in DNS at all** from outside networks (`ENOTFOUND`). This is not caused by the website files. Check in this order:
+1. The domain registration has not expired (at the registrar).
+2. The nameservers point to the hosting provider (cPanel → **Zone Editor** shows the expected records).
+3. The `A` record for `verycare.ca` and `www` points to the server's IP (cPanel → **Server Information** / **Zone Editor**).
+
+---
+
+## Other static hosts
+
+### Netlify
+**Add new site → Import an existing project →** pick the repo. Leave the build command empty and set the publish directory to `/`. `404.html` is used automatically.
+
+### Cloudflare Pages
+**Workers & Pages → Create → Pages → Connect to Git.** Set the preset to *None*, leave the build command empty, and set the output directory to `/`.
+
+### GitHub Pages
+**Settings → Pages → Deploy from a branch**, then choose the branch and `/ (root)`. Add a custom domain if needed.
+
+On these hosts `.htaccess` is ignored, and the `docs/` folder would be publicly readable. That is harmless, but you can remove it from the deployed copy.
+
+---
+
+## After any deployment
+
+- Load every page on a desktop and a mobile browser. Check that the styling applied: the Tailwind CDN could not be loaded in the build environment, so it was substituted locally during testing (see `QA_REPORT.md`).
 - Tap the phone and email links on a phone.
-- Submit the sitemap in Google Search Console.
+- Submit `https://verycare.ca/sitemap.xml` in Google Search Console.

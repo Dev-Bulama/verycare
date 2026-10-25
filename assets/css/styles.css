@@ -6,14 +6,16 @@
  */
 
 :root {
-  /* Brand (provisional — sample from the official logo and update) */
-  --vc-blue-50: #EEF4FA;
-  --vc-blue-100: #D9E7F4;
-  --vc-blue-700: #17589C;
-  --vc-blue-800: #114676;
-  --vc-green-50: #EDF7F0;
-  --vc-green-500: #3AA35F;
-  --vc-green-700: #1E7444;
+  /* Brand — sampled from the VeryCare logo (see docs/DESIGN_SYSTEM.md) */
+  --vc-blue-50: #EEF5FC;
+  --vc-blue-100: #D8E8F8;
+  --vc-blue-500: #3D92E5;  /* logo light blue */
+  --vc-blue-600: #2D73BB;  /* logo blue */
+  --vc-blue-700: #21568C;  /* logo dark blue */
+  --vc-blue-800: #1A4570;
+  --vc-green-50: #EDF8EC;
+  --vc-green-500: #2EA026; /* logo green */
+  --vc-green-700: #1F7419;
 
   /* Neutrals */
   --vc-ink: #0F2A44;
@@ -118,19 +120,17 @@ img, svg { max-width: 100%; }
   }
 }
 
-.brand-logo { height: 52px; width: auto; }
-.footer-logo { height: 56px; width: auto; }
+.brand-logo { height: 48px; width: auto; }
+.footer-logo { height: 44px; width: auto; }
 
 .brand-wordmark {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
   color: var(--vc-blue-700);
 }
 .brand-wordmark span { color: var(--vc-green-700); }
-.brand-wordmark--light { color: #FFFFFF; }
-.brand-wordmark--light span { color: #9FE0B4; }
 
 .nav-link {
   position: relative;
@@ -213,10 +213,10 @@ img, svg { max-width: 100%; }
 .btn svg { flex: none; }
 
 .btn-primary {
-  background: var(--vc-blue-700);
+  background: var(--vc-blue-600);
   color: var(--vc-white);
 }
-.btn-primary:hover { background: var(--vc-blue-800); }
+.btn-primary:hover { background: var(--vc-blue-700); }
 
 .btn-secondary {
   background: var(--vc-white);
@@ -269,8 +269,6 @@ img, svg { max-width: 100%; }
   border-radius: 2px;
   background: var(--vc-green-500);
 }
-.eyebrow--light { color: #BFEBCD; }
-.eyebrow--light::before { background: #9FE0B4; }
 
 .lead {
   font-size: 1.1875rem;
@@ -346,7 +344,7 @@ img, svg { max-width: 100%; }
 
 .page-hero {
   background:
-    radial-gradient(circle at 92% 10%, rgba(58, 163, 95, 0.10), transparent 40%),
+    radial-gradient(circle at 92% 10%, rgba(46, 160, 38, 0.10), transparent 40%),
     var(--vc-blue-50);
   border-bottom: 1px solid var(--vc-line);
 }
@@ -400,7 +398,7 @@ img, svg { max-width: 100%; }
 .form-control:focus {
   outline: none;
   border-color: var(--vc-blue-700);
-  box-shadow: 0 0 0 3px rgba(23, 88, 156, 0.25);
+  box-shadow: 0 0 0 3px rgba(45, 115, 187, 0.3);
 }
 .form-control[aria-invalid="true"] {
   border-color: var(--vc-error);
@@ -469,14 +467,14 @@ select.form-control {
 }
 .footer-logo-plate {
   display: inline-flex;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 1rem 0.55rem 0.7rem;
   border-radius: var(--vc-radius-sm);
   background: var(--vc-white);
 }
 
 .cta-band {
   background:
-    radial-gradient(circle at 100% 0%, rgba(58, 163, 95, 0.35), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(46, 160, 38, 0.35), transparent 45%),
     var(--vc-blue-800);
   color: #E3EBF3;
 }

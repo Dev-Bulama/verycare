@@ -5,7 +5,9 @@ Phone: +1-905-519-3423 · Email: info@verycare.ca
 
 The site is a rebuild of https://verycare.ca/ using the content supplied for the project. It has no database, no backend and no build step.
 
-> **Status — action needed before launch:** add the official logo, confirm opening hours, supply the legal page texts, and decide how the consultation form should submit. See [Known limitations](#known-limitations).
+> **Status — action needed before launch:** confirm opening hours, supply the legal page texts, and decide how the consultation form should submit. See [Known limitations](#known-limitations).
+>
+> **Deploying to the cPanel `public_html`?** Follow `docs/DEPLOYMENT.md`. It moves WordPress out safely, then runs `deploy-cpanel.sh`.
 
 ## Technology
 
@@ -27,11 +29,14 @@ privacy-policy.html        Holding page (policy text to be supplied)       noind
 terms-and-conditions.html  Holding page (terms text to be supplied)        noindex
 404.html                   Not-found page (uses <base href="/">)
 assets/css/styles.css      Design tokens + components
-assets/images/             Illustrations; put verycare-logo.png here
-assets/icons/favicon.svg   Provisional favicon
+assets/images/             Logo (verycare-logo.png), og-image.jpg, illustrations
+assets/images/source/      Logo masters (original JPEG + transparent PNG) — not deployed
+assets/icons/              Favicons generated from the logo
 js/tailwind-config.js      Tailwind theme (brand colours, font)
 js/main.js                 Mobile menu, logo fallback, footer year, form handling
 robots.txt, sitemap.xml
+.htaccess                  Apache/LiteSpeed: index.html first, 404 page, old-URL redirects, blocks docs/.git
+deploy-cpanel.sh           Copies only the public files into ~/public_html
 docs/                      Audit, content corrections, design system, QA, deployment
 ```
 
@@ -50,7 +55,7 @@ An internet connection is needed for the Tailwind CDN and the font.
 
 - **Text:** edit the HTML file for that page. The header and footer are repeated in every page, so **a change to the navigation, footer or contact details must be made in all 8 HTML files** (search and replace works well: e.g. search for `info@verycare.ca`).
 - **Styles:** use Tailwind utility classes in the HTML for layout. Use `assets/css/styles.css` for the shared components (`.btn`, `.card`, `.eyebrow`, form styles…). Colours are defined twice and must stay in sync: the `:root` variables in `styles.css`, and `brand` in `js/tailwind-config.js`. See `docs/DESIGN_SYSTEM.md`.
-- **Logo:** save the official file as `assets/images/verycare-logo.png`. It appears automatically in the header and footer. Until then a text wordmark is shown. If the file has a different format, keep the format and update the `src` in all pages (search for `verycare-logo.png`). Then update the brand colours from the logo, and replace `assets/icons/favicon.svg`.
+- **Logo:** `assets/images/verycare-logo.png` (header and footer, next to the "VeryCare" text). The full-size masters are in `assets/images/source/`. To replace it, export a transparent PNG about 256px high under the same name.
 - **Images:** put files in `assets/images/`, always set `alt`, `width` and `height`, and record the licence in `LICENSES-AND-ATTRIBUTION.md`.
 - **Adding a page with existing content:** copy `about.html`, change the `<title>`, meta description, canonical/OG URLs, the `aria-current="page"` link and the content inside `<main>`. Add it to the navigation in every page and to `sitemap.xml` if it should be indexed.
 
@@ -77,13 +82,13 @@ Recommended checks before each release:
 2. **Links:** every internal `href` should point to an existing file and anchor (no `href="#"`).
 3. **Responsive:** check widths 320–1920px for horizontal scrolling. Use browser dev tools or Playwright.
 4. **Accessibility:** run axe DevTools or Lighthouse on each page, and tab through each page with the keyboard.
-5. **Form:** submit empty (errors should show) and valid (honest status message should show).
+4. **Form:** submit empty (errors should show) and valid (honest status message should show).
 
 The results of the checks run for this delivery are in `docs/QA_REPORT.md`.
 
 ## Deploy
 
-Upload the files to any static host. See `docs/DEPLOYMENT.md` for cPanel/hPanel, Netlify, Cloudflare Pages and GitHub Pages.
+On the cPanel server: clone this repository outside `public_html`, move WordPress out, and run `bash deploy-cpanel.sh`. The exact commands are in `docs/DEPLOYMENT.md`, which also covers Netlify, Cloudflare Pages and GitHub Pages.
 
 ### Optional: compile Tailwind
 
@@ -98,9 +103,8 @@ Where `tailwind.config.js` exports the object in `js/tailwind-config.js` with `c
 ## Known limitations
 
 1. **The live site could not be inspected:** `verycare.ca` did not resolve in DNS during the project. All content comes from the supplied extraction. See `docs/WEBSITE_AUDIT.md`.
-2. **Logo missing:** the text wordmark fallback is in use and the brand colours are provisional.
-3. **Opening hours not published:** the three supplied schedules conflict. See `docs/CONTENT_CORRECTIONS.md` §3.
-4. **Legal pages and blog:** their texts were not supplied, so holding pages are in place.
-5. **Form:** not connected to any submission service (see above).
-6. **Copyright line** reads "© [year] VeryCare". The legal entity name needs owner confirmation (the old site showed "Skillscore").
-7. The Tailwind Play CDN is intended for development; see "Optional: compile Tailwind".
+2. **Opening hours not published:** the three supplied schedules conflict. See `docs/CONTENT_CORRECTIONS.md` §3.
+3. **Legal pages and blog:** their texts were not supplied, so holding pages are in place.
+4. **Form:** not connected to any submission service (see above).
+5. **Copyright line** reads "© [year] VeryCare". The legal entity name needs owner confirmation (the old site showed "Skillscore").
+6. The Tailwind Play CDN is intended for development; see "Optional: compile Tailwind".

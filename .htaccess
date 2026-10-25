@@ -1,0 +1,38 @@
+# VeryCare static website — Apache / LiteSpeed (cPanel) configuration
+# Copied into public_html by deploy-cpanel.sh.
+
+# Serve index.html first (cPanel otherwise prefers index.php if one is present)
+DirectoryIndex index.html
+Options -Indexes
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Uncomment once an SSL certificate (e.g. cPanel AutoSSL) is active:
+  # RewriteCond %{HTTPS} !=on
+  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Never serve hidden files (.git, .env …) or project-only files
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+  RewriteRule ^(docs/|README\.md$|LICENSES-AND-ATTRIBUTION\.md$|deploy-cpanel\.sh$) - [F,L]
+
+  # Old WordPress addresses → new pages
+  RewriteRule ^about-us/?$ /about.html [R=301,L]
+  RewriteRule ^contact-us/?$ /contact-us.html [R=301,L]
+  RewriteRule ^contacts?/?$ /contact-us.html [R=301,L]
+  RewriteRule ^services/?$ /services.html [R=301,L]
+  RewriteRule ^blog/?$ /blog.html [R=301,L]
+  RewriteRule ^privacy-policy/?$ /privacy-policy.html [R=301,L]
+  RewriteRule ^terms-and-conditions?/?$ /terms-and-conditions.html [R=301,L]
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+</IfModule>

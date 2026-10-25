@@ -2,26 +2,26 @@
 
 ## Colour
 
-> **Provisional.** The official logo file could not be downloaded (see `WEBSITE_AUDIT.md` §5), so the brand blue and green below were **not sampled from it**. They are chosen to match the brief's description ("blue and green") and to pass WCAG AA.
->
-> **To update:** sample the logo's blue and green (for example with an eyedropper) and replace the values in **both** `js/tailwind-config.js` (`brand.blue.*`, `brand.green.*`) and the `:root` block of `assets/css/styles.css`. Re-check contrast for text uses (700 shades) against white.
+Brand colours are **sampled from the official logo** (`assets/images/source/verycare-logo-original.jpg`, the most frequent non-white pixel values). Derived tints and shades are marked "derived".
 
-| Token | Hex | Use | Contrast on white |
-| --- | --- | --- | --- |
-| `brand-blue-700` / `--vc-blue-700` | `#17589C` | Primary buttons, links, icons | 7.2 : 1 (AA/AAA) |
-| `brand-blue-800` / `--vc-blue-800` | `#114676` | Hover states, CTA band | 9.7 : 1 |
-| `brand-blue-50` / `--vc-blue-50` | `#EEF4FA` | Hero and tinted backgrounds, icon badges | — |
-| `brand-green-500` / `--vc-green-500` | `#3AA35F` | Decorative accents only (eyebrow rule, active-nav underline, illustrations) | 3.2 : 1, so not used for text |
-| `brand-green-700` / `--vc-green-700` | `#1E7444` | Eyebrow text, green icons | 5.8 : 1 (AA) |
-| `brand-green-50` / `--vc-green-50` | `#EDF7F0` | Green icon badges | — |
-| `ink` / `--vc-ink` | `#0F2A44` | Headings, top bar, footer background | 14.6 : 1 |
-| `body` / `--vc-body` | `#3A4A5C` | Body text | 9.1 : 1 |
-| `muted` / `--vc-muted` | `#55667A` | Secondary text, hints | 5.9 : 1 |
-| `line` / `--vc-line` | `#E2E8EF` | Borders, dividers | — |
-| `canvas` / `--vc-canvas` | `#F6F8FA` | Alternating section background | — |
-| Error | `#B42318` | Field errors, required marker | 6.6 : 1 |
+| Token | Hex | Source | Use | Contrast on white |
+| --- | --- | --- | --- | --- |
+| `brand-blue-500` / `--vc-blue-500` | `#3D92E5` | Logo light blue | Illustrations, decorative only | 3.3 : 1 |
+| `brand-blue-600` / `--vc-blue-600` | `#2D73BB` | Logo blue (main) | Primary buttons (white text) | 4.9 : 1 (AA) |
+| `brand-blue-700` / `--vc-blue-700` | `#21568C` | Logo dark blue | Links, text-coloured icons, button hover | 7.6 : 1 (AAA) |
+| `brand-blue-800` / `--vc-blue-800` | `#1A4570` | Derived | CTA band background | 9.9 : 1 |
+| `brand-blue-50` / `--vc-blue-50` | `#EEF5FC` | Derived | Hero and tinted backgrounds, icon badges | — |
+| `brand-green-500` / `--vc-green-500` | `#2EA026` | Logo green | Decorative accents (eyebrow rule, active-nav underline, illustrations) | 3.4 : 1, so not used for text |
+| `brand-green-700` / `--vc-green-700` | `#1F7419` | Derived (darkened logo green) | Eyebrow text, "Care" in the wordmark, green icons | 5.9 : 1 (AA) |
+| `brand-green-50` / `--vc-green-50` | `#EDF8EC` | Derived | Green icon badges | — |
+| `ink` / `--vc-ink` | `#0F2A44` | Neutral | Headings, top bar, footer background | 14.6 : 1 |
+| `body` / `--vc-body` | `#3A4A5C` | Neutral | Body text | 9.1 : 1 |
+| `muted` / `--vc-muted` | `#55667A` | Neutral | Secondary text, hints | 5.9 : 1 |
+| `line` / `--vc-line` | `#E2E8EF` | Neutral | Borders, dividers | — |
+| `canvas` / `--vc-canvas` | `#F6F8FA` | Neutral | Alternating section background | — |
+| Error | `#B42318` | — | Field errors, required marker | 6.6 : 1 |
 
-Automated axe-core checks found no colour-contrast violations (see `QA_REPORT.md`).
+Colours are defined twice and must stay in sync: in `js/tailwind-config.js` (`brand.*`) and in the `:root` block of `assets/css/styles.css`. Automated axe-core checks found no colour-contrast violations (see `QA_REPORT.md`).
 
 ## Typography
 
@@ -69,14 +69,16 @@ Automated axe-core checks found no colour-contrast violations (see `QA_REPORT.md
 
 ## Imagery
 
-- Two original flat illustrations (`home-living-room.svg`, `home-exterior.svg`) use the brand palette. They show places, not people, so they cannot be mistaken for VeryCare staff or clients.
+- Two original flat illustrations (`home-living-room.svg`, `home-exterior.svg`) use the logo palette. They show places, not people, so they cannot be mistaken for VeryCare staff or clients.
 - If photographs are added later: use licensed images only, record them in `LICENSES-AND-ATTRIBUTION.md`, export WebP/JPEG at no more than 1600px wide, set `width`/`height` attributes, use `loading="lazy"` below the fold, and do not imply the people shown are VeryCare staff or clients.
 
 ## Logo
 
-- Path: `assets/images/verycare-logo.png`, displayed at 52px (header) and 56px (footer, on a white plate) high, `width: auto`, with its proportions preserved.
-- Fallback: if the file is missing, `js/main.js` hides the image and shows the text wordmark "VeryCare" (blue "Very", green "Care").
-- Favicon: `assets/icons/favicon.svg` is a provisional monogram. Replace it with a mark cut from the official logo.
+- **Master files** (kept in the repository, not deployed): `assets/images/source/verycare-logo-original.jpg` (as supplied, 1167×1167 JPEG on white) and `verycare-logo-transparent.png`. The transparent version was made by removing only the outer white background, which keeps the white details inside the hands; the artwork was not redrawn.
+- **Web file:** `assets/images/verycare-logo.png`, 261×256 transparent PNG (≈14 KB). It is shown at 48px high in the header and 44px in the footer (on a white plate), with proportions preserved.
+- The mark has no lettering, so the name **"VeryCare"** is set beside it as live text: "Very" in blue-700 and "Care" in green-700, in Figtree ExtraBold. The image has empty `alt` because the adjacent text and the link's `aria-label` ("VeryCare home") already name it.
+- **Favicons** (generated from the logo): `assets/icons/favicon-32.png`, `icon-192.png`, `apple-touch-icon.png` (180px, white background).
+- **Social sharing image:** `assets/images/og-image.jpg` (1200×630, logo centred on white).
 
 ## Accessibility conventions
 
