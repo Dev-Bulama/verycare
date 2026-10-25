@@ -1,0 +1,12 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Local tooling (not required to run the site)
+node_modules/
+*.log
+.env
+.env.*
