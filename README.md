@@ -54,6 +54,7 @@ An internet connection is needed for the Tailwind CDN and the font.
 ## Editing
 
 - **Text:** edit the HTML file for that page. The header and footer are repeated in every page, so **a change to the navigation, footer or contact details must be made in all 8 HTML files** (search and replace works well: e.g. search for `info@verycare.ca`).
+- **After changing `styles.css`, `main.js` or `tailwind-config.js`:** change its `?v=` value in all 8 HTML files (any new value, e.g. today's date: `styles.css?v=20261101`). Browsers cache these files for 7 days (`.htaccess`), so without a new `?v=` visitors keep the old file and the layout can break.
 - **Styles:** use Tailwind utility classes in the HTML for layout. Use `assets/css/styles.css` for the shared components (`.btn`, `.card`, `.eyebrow`, form styles…). Colours are defined twice and must stay in sync: the `:root` variables in `styles.css`, and `brand` in `js/tailwind-config.js`. See `docs/DESIGN_SYSTEM.md`.
 - **Logo:** `assets/images/verycare-logo.png` (header and footer, next to the "VeryCare" text). The full-size masters are in `assets/images/source/`. To replace it, export a transparent PNG about 256px high under the same name.
 - **Images:** put files in `assets/images/`, always set `alt`, `width` and `height`, and record the licence in `LICENSES-AND-ATTRIBUTION.md`.
